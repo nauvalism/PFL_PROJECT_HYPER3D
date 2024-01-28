@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class CharAnimatorCatcher : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] Character _char;
+    
+    
+    public void DoShoot()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        _char.DoShoot();
+        //Debug.Log("Shoot");
     }
 }
