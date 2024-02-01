@@ -1,0 +1,145 @@
+{
+	"data":
+	{
+		"lvl-1":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":100
+		},
+		"lvl-2":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":250
+		},
+		"lvl-3":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":500
+		},
+		"lvl-4":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":1000
+		},
+		"lvl-5":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":1500
+		},
+		"lvl-6":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":2000
+		},
+		"lvl-7":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":2500
+		},
+		"lvl-8":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":3500
+		},
+		"lvl-9":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":4500
+		},
+		"lvl-10":
+		{
+			"HP" : 0,
+			"speed"  : 0,
+			"baseDamage" : 0,
+			"defaultDamage" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":5000
+		}
+	}
+}

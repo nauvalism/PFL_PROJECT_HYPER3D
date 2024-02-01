@@ -194,7 +194,7 @@ public class AnalogController : MonoBehaviour, IDragHandler, IPointerUpHandler, 
             //    DissapearJoystick();
 
             DissapearJoystick();
-            rootChar.SetMovement(InputDirection);                
+            rootChar.SetMovement(Vector3.zero);                
             //rootRotator.ReceiveAnalogInput(InputDirection);
         }
 

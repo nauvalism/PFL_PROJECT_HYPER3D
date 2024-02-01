@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class CharCollisionCatcher : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    [SerializeField] Character main;
+    
+    private void OnCollisionEnter(Collision other) {
+        if(other.gameObject.CompareTag("Enemy"))
+        {
+
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void OnTriggerEnter(Collider other) {
+        if(other.gameObject.CompareTag("Enemy"))
+        {
+            
+        }
     }
 }

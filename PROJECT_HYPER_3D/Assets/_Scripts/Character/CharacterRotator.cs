@@ -32,7 +32,7 @@ public class CharacterRotator : MonoBehaviour
 
     public void ReceiveAnalogInput(Vector3 dir)
     {
-        refer2.localPosition = new Vector3(-dir.x, refer2.localPosition.y, -dir.y);
+        refer2.localPosition = new Vector3(dir.x, refer2.localPosition.y, dir.y);
     }
 
     // Update is called once per frame

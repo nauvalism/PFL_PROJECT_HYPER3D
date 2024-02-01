@@ -14,16 +14,24 @@ public class HitEffect : MonoBehaviour
     // }
 
     private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Bullet"))
-        {
-            render.material.color = Color.red;
-        }
         
+        
+    }
+
+    private void OnCollisionEnter(Collision other) {
+        // if(other.gameObject.CompareTag("Bullet"))
+        // {
+        //     //render.material.color = Color.red;
+        //     BlinkFlash();
+        // }
     }
 
     public void BlinkFlash()
     {
         LeanTween.cancel(gameObject);
-        
+        LeanTween.value(gameObject, Color.red, Color.white, .25f).setEase(LeanTweenType.easeOutQuad).setOnUpdate((Color c)=>{
+            //Debug.Log("Warna");
+            render.material.color = c;
+        });
     }
 }

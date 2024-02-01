@@ -8,10 +8,16 @@ public class BulletPhysicsCatcher : MonoBehaviour
     
 
     
-    private void OnTriggerEnter(Collider other) {
-        if(other.CompareTag("Enemy"))
+    private void OnCollisionEnter(Collision other) {
+        if(other.gameObject.CompareTag("Enemy"))
         {
-            
+            core.StopBullet();
+            //Debug.Log("Kena Enemy"+ other.gameObject.name);
         }
+    }
+
+    public int GetDmg()
+    {
+        return core.GetDamage();
     }
 }

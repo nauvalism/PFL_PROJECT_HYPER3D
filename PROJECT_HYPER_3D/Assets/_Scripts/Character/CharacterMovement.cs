@@ -29,12 +29,17 @@ public class CharacterMovement : MonoBehaviour
 
     public void SetMovement(Vector3 dir)
     {
-        movement.x = -dir.x;
-        movement.z = -dir.y;
+        movement.x = dir.x;
+        movement.z = dir.y;
     }
 
     private void FixedUpdate() {
         Vector3 moveDirection = new Vector3(movement.x, 0, movement.z).normalized;
         mover.Translate(speed * Time.deltaTime * moveDirection);
+    }
+
+    public Transform GetMover()
+    {
+        return mover;
     }
 }
