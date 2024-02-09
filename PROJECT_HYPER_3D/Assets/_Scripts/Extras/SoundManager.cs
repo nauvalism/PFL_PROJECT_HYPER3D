@@ -41,6 +41,15 @@ public class SoundManager : MonoBehaviour
         source.Play();
     }
 
+    public virtual void PlayPitchAdd(int clipIndex, float addition)
+    {
+        source.Stop();
+        source.loop = false;
+        source.pitch = 1 + addition;
+        source.clip = clips[clipIndex];
+        source.Play();
+    }
+
     public virtual void Play(int clipIndex, bool loop)
     {
         source.Stop();

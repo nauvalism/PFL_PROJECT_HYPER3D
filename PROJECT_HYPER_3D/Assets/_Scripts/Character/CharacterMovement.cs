@@ -12,6 +12,7 @@ public class CharacterMovement : MonoBehaviour
     [SerializeField] Transform rotator;
     [SerializeField] Transform rotatorReference;
     [SerializeField] float speed = 10;
+    [SerializeField] bool move = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +35,12 @@ public class CharacterMovement : MonoBehaviour
     }
 
     private void FixedUpdate() {
+        if(!move)
+        return;
+
+        if(GameplayController.instance.GetState() == GameState.LevelUp)
+        return;
+
         Vector3 moveDirection = new Vector3(movement.x, 0, movement.z).normalized;
         mover.Translate(speed * Time.deltaTime * moveDirection);
     }
@@ -41,5 +48,15 @@ public class CharacterMovement : MonoBehaviour
     public Transform GetMover()
     {
         return mover;
+    }
+
+    public void Move()
+    {
+        move = true;
+    }
+
+    public void UnMove()
+    {
+        move = false;
     }
 }

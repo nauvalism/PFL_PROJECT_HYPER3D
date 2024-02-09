@@ -8,7 +8,9 @@ public class EnemyCollisionCatcher : MonoBehaviour
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.CompareTag("Bullet"))
         {
+        
             int dmg = other.gameObject.transform.GetComponent<BulletPhysicsCatcher>().GetDmg();
+            
             root.GetHit(dmg);
         }
     }

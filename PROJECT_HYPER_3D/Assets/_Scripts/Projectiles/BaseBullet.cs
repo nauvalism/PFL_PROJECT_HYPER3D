@@ -14,7 +14,7 @@ public class BaseBullet : MonoBehaviour
 
     private void Start() {
         IgnoreLayer(col);
-        
+        Destroy(gameObject, 5.0f);
         //rb.AddForce(new Vector3(0,0,1) * 500);
     }
 
@@ -28,6 +28,17 @@ public class BaseBullet : MonoBehaviour
         
         this.dir = dir;
         rb.AddForce(dir * speed);
+        
+    }
+
+    public void LaunchBullet(Vector3 dir, Transform reference)
+    {
+        
+        this.dir = dir;
+        graphic.transform.LookAt(reference, new Vector3(0,0,1));
+        //graphic.transform.Rotate(new Vector3(0,90,0))
+        rb.AddForce(dir * speed);
+        
     }
 
     private void OnCollisionEnter(Collision other) {

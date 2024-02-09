@@ -11,7 +11,37 @@ PrefabInstance:
     - target: {fileID: 23540730404865437, guid: ea9d602c0019276469cc2ce655345417,
         type: 3}
       propertyPath: m_Name
-      value: CHARACTER UI
+      value: CUI-ENEMY
+      objectReference: {fileID: 0}
+    - target: {fileID: 427022865858031290, guid: ea9d602c0019276469cc2ce655345417,
+        type: 3}
+      propertyPath: m_Alpha
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893247231598731523, guid: ea9d602c0019276469cc2ce655345417,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.95313793
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893247231598731523, guid: ea9d602c0019276469cc2ce655345417,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.30253625
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893247231598731523, guid: ea9d602c0019276469cc2ce655345417,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893247231598731523, guid: ea9d602c0019276469cc2ce655345417,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4893247231598731523, guid: ea9d602c0019276469cc2ce655345417,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 35.22
       objectReference: {fileID: 0}
     - target: {fileID: 8681836557668817548, guid: ea9d602c0019276469cc2ce655345417,
         type: 3}

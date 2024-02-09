@@ -15,23 +15,52 @@ public enum GameState
 
 public enum ChoiceMemberID
 {
-    HP = 0,
-    peed  = 1,
-    baseDamage = 2,
-    defaultDamage = 3,
-    damageMultiplier = 4,
-    baseAspd = 5,
-    range = 6,
-    pickupRadius = 7
+    Max_Health_Points = 0,
+    Movement_Speed  = 1,
+    Base_Damage = 2,
+    Body_Armor = 3,
+    Damage_Multiplier = 4,
+    Attack_Speed = 5,
+    Shoot_Range = 6,
+    Pickup_Radius = 7
 
+}
+
+public enum StatisticID
+{
+    timeSurvive = 0,
+    zombieKilled = 1,
+    damageDealt = 2,
+    damageTaken = 3,
+    deathTimes = 4,
+    level = 5,
+    stage = 6,
+    wave = 7,
+    currency_1 = 8,
+    currency_2 = 9,
+    currency_3 = 10
 }
 
 public class GameplayController : MonoBehaviour
 {
+    public static GameplayController instance {get;set;}
+
+    private void Awake() {
+        instance = this;
+    }
+
+
+    [SerializeField] Character mainChar;
     [SerializeField] EXP charExp;
     [SerializeField] BattleStatistics battle;
     [SerializeField] UIManager ui;
     [SerializeField] GameState state;
+    [SerializeField] float invulnerableDuration = 2;
+    [SerializeField] float startWaitTime = 3;
+    
+    
+    [SerializeField] StatisticsValue sValue;
+    [SerializeField] MusicManager music;
 
     private void OnValidate() {
         if(charExp != null)
@@ -41,20 +70,59 @@ public class GameplayController : MonoBehaviour
                 charExp.ProcessLevelTxt();
             }
         }
+
+        
+    }
+
+    private void Update() {
+        if(Input.GetKeyDown(KeyCode.B))
+        {
+            mainChar.DoLevelUp();
+        }
+
+
+        if(state == GameState.MidGame)
+        {
+            sValue.AddValue(StatisticID.timeSurvive, Time.deltaTime);
+        }
     }
 
     private void Start() {
+        mainChar = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
         ResetStatistics();
+        ResetExp();
+        ui.SetExp(charExp.maxExp[0], charExp.currentExp);
+       
     }
+
+    public void StartGameCountDown()
+    {
+        StartCoroutine(StartGame());
+        IEnumerator StartGame()
+        {
+            yield return new WaitForSeconds(startWaitTime);
+
+        }
+    }
+
+    public void ResetAll()
+    {
+        WaveManager.instance.ResetScript();
+        mainChar.ResetScript();
+        EnemySpawner.instance.ResetScript();
+        ChoiceManager.instance.ResetChoices();
+    }
+
 
     public void ResetExp()
     {
-        charExp = new EXP();
+        charExp.ResetExp();
     }
 
     public void ResetStatistics()
     {
         battle = new BattleStatistics();
+        sValue = new StatisticsValue();
     }
 
     public void KillEnemy()
@@ -67,23 +135,144 @@ public class GameplayController : MonoBehaviour
         battle.DealDamage(dmg);
     }
 
+    public void PlayerDamaged(int dmg)
+    {
+        bool dead = mainChar.GetHit(dmg);
+        if(dead)
+        {
+            ui.HideVignette();
+        }
+        else
+        {
+            StartCoroutine(PlayerDamaging());
+        }
+
+        IEnumerator PlayerDamaging()
+        {
+            mainChar.Invulnerable();
+            ui.ShowVignette(Color.red, invulnerableDuration);
+            yield return new WaitForSeconds(invulnerableDuration);
+            ui.HideVignette();
+            mainChar.UnInvulnerable();
+        }
+        
+    }
+
     public void AddExp(int exp)
     {
         bool levelup = charExp.AddExp(exp);
         if(levelup)
         {
-
+            
+            ShowPowerup();
         }
+        float cur = this.charExp.currentExp;
+        float max = this.charExp.GetMaxExp();
+        ui.SetExp(max,cur,charExp.currentLevel, true);
+    }
+
+    public void PauseEnemyAndCharacter()
+    {
+        mainChar.PauseAnim();
+        EnemySpawner.instance.PauseAll();
+    }
+
+    public void ResumeEnemyAndCharacter()
+    {
+        mainChar.ResumeAnim();
+        EnemySpawner.instance.ResumeAll();
     }
 
     public void ShowPowerup()
     {
-
+        ChoiceManager.instance.ShowChoices(false);
     }
 
     public void SetState(GameState state)
     {
         this.state = state;
+    }
+
+    public GameState GetState()
+    {
+        return state;
+    }
+
+    public void ApplyStat(ChoiceAttribute attribute)
+    {
+        List<int> toBeAdded = attribute.values;
+        mainChar.ApplyStat(toBeAdded);
+    }
+
+    public void Flash(System.Action during, System.Action after)
+    {
+        ui.Flash(during,after);
+    }
+
+    public void SyncStatistics()
+    {
+        
+    }
+
+    public void SetStatistic(StatisticID what, float value)
+    {
+        sValue.SetValue(what, value);
+    }
+
+    public void AddStatistic(StatisticID what, float value)
+    {
+        sValue.AddValue(what,value);
+    }
+
+    public void SyncBasicStats(MainCharacterAttribute attr)
+    {
+        sValue.SetValue(attr);
+    }
+}
+
+[System.Serializable]
+public class StatisticsValue
+{
+    public List<float> statisticValue;
+    public List<float> baseStatValues;
+
+    public StatisticsValue()
+    {
+        statisticValue = new List<float>();
+        baseStatValues = new List<float>();
+
+        for(int i = 0 ; i < System.Enum.GetNames(typeof(StatisticID)).Length ; i++)
+        {
+            statisticValue.Add(0);
+        }
+
+        for(int i = 0 ; i < System.Enum.GetNames(typeof(ChoiceMemberID)).Length ; i++)
+        {
+            baseStatValues.Add(0);
+        }
+        
+    }
+
+    public void AddValue(StatisticID id, float value)
+    {
+        statisticValue[(int)id] += value;
+    }
+
+    public void SetValue(StatisticID id, float value)
+    {
+        statisticValue[(int)id] = value;
+    }
+
+    public void SetValue(MainCharacterAttribute attr)
+    {
+        baseStatValues[(int)ChoiceMemberID.Base_Damage] = attr.baseDamage;
+        baseStatValues[(int)ChoiceMemberID.Attack_Speed] = attr.baseAspd;
+        baseStatValues[(int)ChoiceMemberID.Damage_Multiplier] = attr.damageMultiplier;
+        baseStatValues[(int)ChoiceMemberID.Body_Armor] = attr.armor;
+        baseStatValues[(int)ChoiceMemberID.Max_Health_Points] = attr.HP;
+        baseStatValues[(int)ChoiceMemberID.Movement_Speed] = attr.speed;
+        baseStatValues[(int)ChoiceMemberID.Pickup_Radius] = attr.pickupRadius;
+        baseStatValues[(int)ChoiceMemberID.Shoot_Range] = attr.range;
     }
 }
 
@@ -117,7 +306,7 @@ public class CharacterAttribute
     public int HP = 100;
     public float speed  = 1;
     public float baseDamage = 10;
-    public float defaultDamage = 10;
+    public float armor = 10;
     public float damageMultiplier = 1;
 
     public virtual void AddStat(CharacterAttribute stat)
@@ -125,7 +314,7 @@ public class CharacterAttribute
         this.HP += stat.HP;
         this.speed += stat.speed;
         this.baseDamage += stat.baseDamage;
-        this.defaultDamage += stat.defaultDamage;
+        this.armor += stat.armor;
         this.damageMultiplier += stat.damageMultiplier;
     }
 
@@ -135,6 +324,26 @@ public class CharacterAttribute
     }
 
     public virtual void AddStat(EnemyAttribute stat)
+    {
+
+    }
+
+    public virtual void AddStat(List<int> values)
+    {
+
+    }
+
+    public virtual void RefreshStatToStatistic()
+    {
+
+    }
+
+    public virtual void RefreshStatToStatistic(CharacterAttribute ca)
+    {
+
+    }
+
+    public virtual void RefreshStatToStatistic(MainCharacterAttribute mac)
     {
 
     }
@@ -154,11 +363,39 @@ public class MainCharacterAttribute : CharacterAttribute
         this.HP += stat.HP;
         this.speed += stat.speed;
         this.baseDamage += stat.baseDamage;
-        this.defaultDamage += stat.defaultDamage;
+        this.armor += stat.armor;
         this.damageMultiplier += stat.damageMultiplier;
         this.baseAspd -= stat.baseAspd;
         this.range += stat.range;
         this.pickupRadius += stat.pickupRadius;
+    }
+
+    public override void AddStat(List<int> values)
+    {
+        base.AddStat(values);
+        this.HP += values[(int)ChoiceMemberID.Max_Health_Points];
+        this.speed += values[(int)ChoiceMemberID.Movement_Speed];
+        this.baseDamage += values[(int)ChoiceMemberID.Base_Damage];
+        this.armor += values[(int)ChoiceMemberID.Body_Armor];
+        this.damageMultiplier += values[(int)ChoiceMemberID.Damage_Multiplier];
+        this.baseAspd += values[(int)ChoiceMemberID.Attack_Speed];
+        this.range += values[(int)ChoiceMemberID.Shoot_Range];
+        this.pickupRadius += values[(int)ChoiceMemberID.Pickup_Radius];
+    }
+
+    public override void RefreshStatToStatistic()
+    {
+
+    }
+
+    public override void RefreshStatToStatistic(CharacterAttribute ca)
+    {
+
+    }
+
+    public override void RefreshStatToStatistic(MainCharacterAttribute mac)
+    {
+        
     }
 
 }
@@ -175,7 +412,7 @@ public class EnemyAttribute : CharacterAttribute
         this.HP += stat.HP;
         this.speed += stat.speed;
         this.baseDamage += stat.baseDamage;
-        this.defaultDamage += stat.defaultDamage;
+        this.armor += stat.armor;
         this.damageMultiplier += stat.damageMultiplier;
         this.explosionRadius += stat.explosionRadius;
     }
@@ -210,6 +447,12 @@ public class EXP
         }
     }
 
+    public void ResetExp()
+    {
+        currentExp = 0;
+        currentLevel = 0;
+    }
+
     public void ProcessLevelTxt()
     {
         maxExp = new List<int>();
@@ -226,7 +469,7 @@ public class EXP
     public bool AddExp(int howMuch)
     {
         int tempNextExp = (currentExp + howMuch);
-        if(tempNextExp > maxExp[currentLevel])
+        if(tempNextExp >= maxExp[currentLevel])
         {
             currentExp = (tempNextExp - maxExp[currentLevel]);
             ++currentLevel;
@@ -237,6 +480,16 @@ public class EXP
             currentExp = tempNextExp;
             return false;
         }
+    }
+
+    public int GetMaxExp(int lvl)
+    {
+        return maxExp[lvl];
+    }
+
+    public int GetMaxExp()
+    {
+        return maxExp[currentLevel];
     }
 
     

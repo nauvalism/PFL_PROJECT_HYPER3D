@@ -5,10 +5,14 @@ using UnityEngine;
 public class CharacterEnemySensor : MonoBehaviour
 {
     [SerializeField] Character coreChar;
-    [SerializeField] List<GameObject> Enemies;
-
+    [SerializeField] Collider theSensor;
+    [SerializeField] List<Collider> Enemies;
+    [SerializeField] List<BaseEnemy> sensoredEnemy;
+    [SerializeField] List<DistanceComparerF> sensoredEnemyDistance;
+    
     private void Start() {
-        Enemies = new List<GameObject>();
+        Enemies = new List<Collider>();
+        sensoredEnemyDistance = new List<DistanceComparerF>();
     }
 
     public void AddEnemy()
@@ -21,16 +25,82 @@ public class CharacterEnemySensor : MonoBehaviour
 
     }
 
-    public void RegisterEnemy(GameObject g)
+
+
+    public void RegisterEnemy(Collider g, BaseEnemy e)
     {
         Enemies.Add(g);
         coreChar.AddTarget(g.transform);
+        sensoredEnemy.Add(e);
+        sensoredEnemyDistance.Add(e.GetDistanceComparer());
+    }
+
+    public void RemoveTarget(Collider c, BaseEnemy e)
+    {
+        Enemies.Remove(c);
+        sensoredEnemy.Remove(e);
+        coreChar.NullifyTarget();
+        //coreChar.RemoveTargetOnly(c.transform);
+        if(sensoredEnemy.Count > 1)
+            ReSort();
+
+        try
+        {
+            coreChar.AddTarget(sensoredEnemy[0].GetMover());
+        }catch(System.Exception x)
+        {
+
+        }
+        
+    }
+
+    public void UnRegisterEnemy(Collider c, BaseEnemy e)
+    {
+        Debug.Log("UnregisterEnemy");
+        //Physics.IgnoreCollision(theSensor, c);
+        sensoredEnemy.Remove(e);
+        Enemies.Remove(c);
+        coreChar.NullifyTarget();
+        //coreChar.RemoveTargetOnly(c.transform);
+        if(sensoredEnemy.Count > 1)
+            ReSort();
+            
+        try
+        {
+            coreChar.AddTarget(sensoredEnemy[0].GetMover());
+        }catch(System.Exception x)
+        {
+
+        }
+        
+    }
+
+    public void ReSort()
+    {
+        try
+        {
+            sensoredEnemy.Sort((delegate(BaseEnemy a, BaseEnemy b)
+            {return Vector2.Distance(coreChar.GetMover().position,a.GetMover().position)
+            .CompareTo(
+                Vector2.Distance(coreChar.GetMover().position,b.GetMover().position) );
+            }));
+        }catch(System.Exception e)
+        {
+
+        }
+        
+    }
+
+    public bool NoEnemy()
+    {
+        return (sensoredEnemy.Count == 0);
     }
 
     private void OnTriggerEnter(Collider other) {
         if(other.CompareTag("Enemy"))
         {
-            RegisterEnemy(other.gameObject);
+            Debug.Log(other.name);
+            RegisterEnemy(other, other.gameObject.transform.parent.parent.parent.GetComponent<BaseEnemy>());
         }
         
     }
@@ -40,6 +110,9 @@ public class CharacterEnemySensor : MonoBehaviour
     }
 
     private void OnTriggerExit(Collider other) {
-        
+        if(other.CompareTag("Enemy"))
+        {
+            RemoveTarget(other,other.gameObject.transform.parent.parent.parent.GetComponent<BaseEnemy>());
+        }
     }
 }

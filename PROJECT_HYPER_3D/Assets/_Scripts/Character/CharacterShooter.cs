@@ -11,10 +11,15 @@ public class CharacterShooter : MonoBehaviour
     [SerializeField] ParticleSystem spawnParticle;
     [SerializeField] Transform reference;
     [SerializeField] Vector3 shootDirection;
+    [SerializeField] SphereCollider shootRangeCollider;
+
     [Header("WEAPON")]
     [SerializeField] Transform weaponParent;
     [SerializeField] BaseWeapon activeWeapon;
     [SerializeField] List<BaseWeapon> activeWeapons;
+
+    [Header("SOUND")]
+    [SerializeField] SoundManager sound;
 
     private void OnValidate() {
         if(weaponParent != null)
@@ -42,13 +47,13 @@ public class CharacterShooter : MonoBehaviour
     {
         
         GameObject go;
-        go = (GameObject)Instantiate(bulletPrefab, bulletSpawnPlace.position, Quaternion.identity);
+        go = (GameObject)Instantiate(activeWeapon.GetBullet(), bulletSpawnPlace.position, Quaternion.identity);
         BaseBullet bullet = go.GetComponent<BaseBullet>();
 
         bullet.IgnoreLayer(rootChar.GetHitBox());
         dir = (reference.position - bulletSpawnPlace.position).normalized;
         spawnParticle.Play();
-        bullet.LaunchBullet(dir);
+        bullet.LaunchBullet(dir, reference);
         rootChar.ShakeCamera(1.0f, 0, 0, 0.5f);
 
     }
@@ -61,5 +66,25 @@ public class CharacterShooter : MonoBehaviour
         {
             activeWeapons.Add(t.GetComponent<BaseWeapon>());
         }
+    }
+
+
+
+
+
+
+
+
+
+    public void ChangeShootRadius(float to)
+    {
+        shootRangeCollider.radius = to;
+    }
+
+    public void AddShootRadius(float to)
+    {
+        float current = shootRangeCollider.radius;
+        current += to;
+        shootRangeCollider.radius = current;
     }
 }

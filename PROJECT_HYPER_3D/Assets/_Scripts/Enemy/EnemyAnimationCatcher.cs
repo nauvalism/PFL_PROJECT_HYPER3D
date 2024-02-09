@@ -26,4 +26,14 @@ public class EnemyAnimationCatcher : MonoBehaviour
     {
         
     }
+
+    public void Pause()
+    {
+        anim.enabled = false;
+    }
+
+    public void Resume()
+    {
+        anim.enabled = true;
+    }
 }

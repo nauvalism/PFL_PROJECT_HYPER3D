@@ -27,7 +27,24 @@ public class CharacterRotator : MonoBehaviour
 
     public void AddTarget(Transform t)
     {
-        this.target = t;
+        if(target == null)
+        {
+            this.target = t;
+        }
+        
+    }
+
+    public void RemoveTarget(Transform t)
+    {
+        if(target == t)
+        {
+            this.target = null;
+        }
+    }
+
+    public void NullifyTarget()
+    {
+        target = null;
     }
 
     public void ReceiveAnalogInput(Vector3 dir)
