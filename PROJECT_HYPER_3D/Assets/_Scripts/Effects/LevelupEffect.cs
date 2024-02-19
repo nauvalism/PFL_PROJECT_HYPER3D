@@ -8,6 +8,8 @@ public class LevelupEffect : MonoBehaviour
    [SerializeField] TextMeshPro levelupTxt;
    [SerializeField] SpriteRenderer circleCore;
    [SerializeField] ParticleSystem particle;
+   [SerializeField] List<ParticleSystem> particles;
+   [SerializeField] List<SoundManager> levelupSounds;
 
    public void DoLvlUp()
    {
@@ -27,5 +29,14 @@ public class LevelupEffect : MonoBehaviour
         }).setLoopPingPong(1);
 
         particle.Play();
+        for(int i = 0 ; i < particles.Count ; i++)
+        {
+            particles[i].Play();
+        }
+
+        for(int i = 0 ; i < levelupSounds.Count ; i++)
+        {
+            levelupSounds[i].Play(i);
+        }
    }
 }

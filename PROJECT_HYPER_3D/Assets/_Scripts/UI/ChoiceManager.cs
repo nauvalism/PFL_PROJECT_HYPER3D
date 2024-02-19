@@ -30,6 +30,8 @@ public class ChoiceManager : MonoBehaviour
 
     [Header("GRAPHICS")]
     [SerializeField] CanvasGroup choiceCG;
+    [Header("SOUNDS")]
+    [SerializeField] SoundManager choiceContainerSound;
 
     private void Update() {
         
@@ -92,7 +94,7 @@ public class ChoiceManager : MonoBehaviour
 
             ResetGraphic();
             ShowChoiceCG();
-            
+            choiceContainerSound.Play(0);
             for(int i = 0 ; i < toBeFilledChoiceMembers.Count ; i++)
             {
                 toBeFilledChoiceMembers[i].ModifyCG(false);
@@ -119,6 +121,7 @@ public class ChoiceManager : MonoBehaviour
     {
         StopCountingDown();
         StartCoroutine(HidingChoices());
+        choiceContainerSound.Play(1);
         IEnumerator HidingChoices()
         {
             for(int i = 0 ; i < toBeFilledChoiceMembers.Count ; i++)
@@ -134,7 +137,8 @@ public class ChoiceManager : MonoBehaviour
             }
     
             HideChoiceCG();
-            GameplayController.instance.SetState(GameState.MidGame);
+            GameplayController.instance.HidePowerup();
+            //GameplayController.instance.SetState(GameState.MidGame);
             
         }
         
@@ -180,7 +184,7 @@ public class ChoiceManager : MonoBehaviour
             choiceAttributes[i].FillValue(__type, value);
 
 
-            toBeFilledChoiceMembers[i].FillMember(choiceAttributes[i]);
+            toBeFilledChoiceMembers[i].FillMember(choiceAttributes[i],i);
         }
 
 

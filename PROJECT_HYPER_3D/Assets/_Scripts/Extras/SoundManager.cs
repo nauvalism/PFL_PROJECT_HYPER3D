@@ -37,6 +37,7 @@ public class SoundManager : MonoBehaviour
     {
         source.Stop();
         source.loop = false;
+        source.pitch = 1;
         source.clip = clips[clipIndex];
         source.Play();
     }
@@ -54,6 +55,7 @@ public class SoundManager : MonoBehaviour
     {
         source.Stop();
         source.loop = loop;
+        source.pitch = 1;
         source.clip = clips[clipIndex];
         source.Play();
     }

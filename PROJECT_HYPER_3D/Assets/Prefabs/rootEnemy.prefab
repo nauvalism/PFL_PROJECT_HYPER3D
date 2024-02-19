@@ -92,8 +92,9 @@ MonoBehaviour:
   dmgTextPrefab: {fileID: 8370842133618693157, guid: 65caf0af045006545a0110d28cabad20,
     type: 3}
   dmgTxtParent: {fileID: 2720709109683813355}
+  root: {fileID: 0}
   col: {fileID: 6870092587625357138}
-  anim: {fileID: 0}
+  anim: {fileID: 2948201458203514729}
   attribute:
     HP: 100
     speed: 0.2
@@ -118,6 +119,7 @@ MonoBehaviour:
     curNum: 320000000200000001000000
     curPrefabs: []
   ui: {fileID: 9124672220304144382}
+  sound: {fileID: 8591349925317835917}
 --- !u!114 &4521130024976518814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -938,6 +940,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2561264430973365754}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2948201458203514729 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 820057506905651859, guid: e45a69c421144304c8d8176026d3fd7b,
+    type: 3}
+  m_PrefabInstance: {fileID: 2561264430973365754}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d628843e6b534142a68c07ff9a7c14f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2810675153327256195
 PrefabInstance:
   m_ObjectHideFlags: 0

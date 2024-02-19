@@ -5,8 +5,8 @@
 		{
 			"HP" : 0,
 			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"baseDamage" : 2,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -19,8 +19,8 @@
 		{
 			"HP" : 0,
 			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"baseDamage" : 2,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -33,8 +33,8 @@
 		{
 			"HP" : 0,
 			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"baseDamage" : 2,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -46,9 +46,9 @@
 		"lvl-4":
 		{
 			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -59,13 +59,13 @@
 		},
 		"lvl-5":
 		{
-			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"HP" : 10,
+			"speed"  : 2,
+			"baseDamage" : 5,
+			"armor" : 2,
 			"damageMultiplier" : 0,
-			"baseAspd" : 0,
-			"range" : 0,
+			"baseAspd" : 2,
+			"range" : 3,
 			"pickupRadius" : 0,
 			"choiceTier":0,
 			"choiceCount":4,
@@ -74,9 +74,9 @@
 		"lvl-6":
 		{
 			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -88,9 +88,9 @@
 		"lvl-7":
 		{
 			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -102,9 +102,9 @@
 		"lvl-8":
 		{
 			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -116,9 +116,9 @@
 		"lvl-9":
 		{
 			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
@@ -129,17 +129,297 @@
 		},
 		"lvl-10":
 		{
+			"HP" : 10,
+			"speed"  : 2,
+			"baseDamage" : 5,
+			"armor" : 2,
+			"damageMultiplier" : 0,
+			"baseAspd" : 2,
+			"range" : 3,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":5000
+		},
+		"lvl-11":
+		{
 			"HP" : 0,
-			"speed"  : 0,
-			"baseDamage" : 0,
-			"defaultDamage" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
 			"damageMultiplier" : 0,
 			"baseAspd" : 0,
 			"range" : 0,
 			"pickupRadius" : 0,
 			"choiceTier":0,
 			"choiceCount":4,
-			"maxExp":5000
+			"maxExp":7000
+		},
+		"lvl-12":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":9000
+		},
+		"lvl-13":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":11000
+		},
+		"lvl-14":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":13500
+		},
+		"lvl-15":
+		{
+			"HP" : 10,
+			"speed"  : 2,
+			"baseDamage" : 5,
+			"armor" : 2,
+			"damageMultiplier" : 0,
+			"baseAspd" : 2,
+			"range" : 3,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":17000
+		},
+		"lvl-16":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":22000
+		},
+		"lvl-17":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":25000
+		},
+		"lvl-18":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":30000
+		},
+		"lvl-19":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":35000
+		},
+		"lvl-20":
+		{
+			"HP" : 10,
+			"speed"  : 2,
+			"baseDamage" : 5,
+			"armor" : 2,
+			"damageMultiplier" : 0,
+			"baseAspd" : 2,
+			"range" : 3,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":40000
+		},
+		"lvl-21":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":45000
+		},
+		"lvl-22":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":50000
+		},
+		"lvl-23":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":60000
+		},
+		"lvl-24":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":70000
+		},
+		"lvl-25":
+		{
+			"HP" : 10,
+			"speed"  : 2,
+			"baseDamage" : 5,
+			"armor" : 2,
+			"damageMultiplier" : 0,
+			"baseAspd" : 2,
+			"range" : 3,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":80000
+		},
+		"lvl-26":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":90000
+		},
+		"lvl-27":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":100000
+		},
+		"lvl-28":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":115000
+		},
+		"lvl-29":
+		{
+			"HP" : 0,
+			"speed"  : 1,
+			"baseDamage" : 1,
+			"armor" : 0,
+			"damageMultiplier" : 0,
+			"baseAspd" : 0,
+			"range" : 0,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":130000
+		},
+		"lvl-30":
+		{
+			"HP" : 10,
+			"speed"  : 2,
+			"baseDamage" : 5,
+			"armor" : 2,
+			"damageMultiplier" : 0,
+			"baseAspd" : 2,
+			"range" : 3,
+			"pickupRadius" : 0,
+			"choiceTier":0,
+			"choiceCount":4,
+			"maxExp":150000
 		}
 	}
 }

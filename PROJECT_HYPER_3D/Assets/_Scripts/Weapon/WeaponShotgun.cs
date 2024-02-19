@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponShotgun : MonoBehaviour
+public class WeaponShotgun : BaseWeapon
 {
     // Start is called before the first frame update
     void Start()

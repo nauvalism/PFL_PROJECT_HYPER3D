@@ -14,6 +14,7 @@ public class ChoiceMember : MonoBehaviour
     [SerializeField] TextMeshProUGUI choiceValueTxt;
     [SerializeField] GameObject mover;
     [SerializeField] CanvasGroup cg;
+    [SerializeField] SoundManager choiceSound;
 
     private void OnValidate() {
         attribute = new ChoiceAttribute();
@@ -27,8 +28,9 @@ public class ChoiceMember : MonoBehaviour
         choiceValueTxt.text = "-1";
     }
 
-    public void FillMember(ChoiceAttribute attribute)
+    public void FillMember(ChoiceAttribute attribute, int memberID = 0)
     {
+        this.memberID = memberID;
         this.attribute = attribute;
         this.choiceDescription.text = System.Enum.GetName(typeof(ChoiceMemberID), attribute.choiceID).Replace("_"," "); 
         this.choiceValueTxt.text = "+"+attribute.GetValue().ToString();
@@ -59,8 +61,10 @@ public class ChoiceMember : MonoBehaviour
 
     }
 
-    public void Show()
+    public void Show(int order = 0)
     {
+        float pitchAddition = memberID / 5;
+        choiceSound.PlayPitchAdd(0, pitchAddition);
         LeanTween.cancel(cg.gameObject);
         LeanTween.cancel(mover.gameObject);
         cg.alpha = 0;
@@ -86,6 +90,7 @@ public class ChoiceMember : MonoBehaviour
 
     public void Choose()
     {
+        choiceSound.Play(1);
         ChoiceManager.instance.Choose(memberID);
     }
 }

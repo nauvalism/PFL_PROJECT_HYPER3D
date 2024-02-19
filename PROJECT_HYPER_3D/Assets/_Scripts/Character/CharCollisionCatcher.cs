@@ -9,17 +9,26 @@ public class CharCollisionCatcher : MonoBehaviour
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.CompareTag("Enemy"))
         {
-            Debug.Log(other.gameObject);
-            BaseEnemy be = other.gameObject.transform.parent.parent.GetComponent<BaseEnemy>();
-            GameplayController.instance.PlayerDamaged(be.GetHitDmg());
+            
+            Debug.Log("Player Hit "+other.gameObject);
+
+            if(main.GetInvulnerable() == false)
+            {
+                BaseEnemy be = other.gameObject.transform.parent.parent.GetComponent<BaseEnemy>();
+                GameplayController.instance.PlayerDamaged(be, be.GetHitDmg());
+            }
+
+
+            
         }
     }
 
     private void OnTriggerEnter(Collider other) {
         if(other.gameObject.CompareTag("Enemy"))
         {
+            Debug.Log("Player Hit Trigger "+other.transform.parent.gameObject.name+"--"+gameObject.name);
             BaseEnemy be = other.gameObject.transform.parent.parent.parent.GetComponent<BaseEnemy>();
-            GameplayController.instance.PlayerDamaged(be.GetHitDmg());
+            GameplayController.instance.PlayerDamaged(be, be.GetHitDmg());
         }
     }
 }

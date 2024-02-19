@@ -12,6 +12,8 @@ public class CharacterShooter : MonoBehaviour
     [SerializeField] Transform reference;
     [SerializeField] Vector3 shootDirection;
     [SerializeField] SphereCollider shootRangeCollider;
+    [SerializeField] List<Transform> shootPlaces;
+    [SerializeField] List<Transform> shootReferences;
 
     [Header("WEAPON")]
     [SerializeField] Transform weaponParent;
@@ -45,15 +47,21 @@ public class CharacterShooter : MonoBehaviour
 
     public void DoShoot()
     {
-        
+        //return;
         GameObject go;
         go = (GameObject)Instantiate(activeWeapon.GetBullet(), bulletSpawnPlace.position, Quaternion.identity);
         BaseBullet bullet = go.GetComponent<BaseBullet>();
 
         bullet.IgnoreLayer(rootChar.GetHitBox());
+        int dmg = (int)activeWeapon.GetDmg() + (int)rootChar.GetAttribute().baseDamage;
+
+
+        dmg = dmg + ((dmg * (int)rootChar.GetAttribute().damageMultiplier) / 10);
+
+
         dir = (reference.position - bulletSpawnPlace.position).normalized;
         spawnParticle.Play();
-        bullet.LaunchBullet(dir, reference);
+        bullet.LaunchBullet(dir, reference, dmg);
         rootChar.ShakeCamera(1.0f, 0, 0, 0.5f);
 
     }
@@ -68,7 +76,17 @@ public class CharacterShooter : MonoBehaviour
         }
     }
 
+    public void ShootIdle()
+    {
+        bulletSpawnPlace = shootPlaces[0];
+        reference = shootReferences[0];
+    }
 
+    public void ShootMove()
+    {
+        bulletSpawnPlace = shootPlaces[1];
+        reference = shootReferences[1];
+    }
 
 
 

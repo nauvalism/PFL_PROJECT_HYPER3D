@@ -17,10 +17,12 @@ public class Character : MonoBehaviour
     [SerializeField] CharacterMovement mover;
     [SerializeField] CharAnimatorCatcher charAnim;
     [SerializeField] CharacterEnemySensor charSensor;
+    [SerializeField] GraphicActor charGraphic;
     [SerializeField] Collider hitBox;
 
     [Header("BARRIER")]
     [SerializeField] GameObject barrier;
+    [SerializeField] Transform barrierScaler;
     [SerializeField] Renderer barrierRenderer;
     [SerializeField] Material barrierMaterial;
 
@@ -49,16 +51,46 @@ public class Character : MonoBehaviour
         vShake = vCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
+    private void Awake() {
+        charGraphic.DisableGraphic();
+        mover.DisableMovement();
+    }
+
     private void Start() {
         barrierRenderer = barrier.GetComponent<Renderer>();
         barrierMaterial = barrierRenderer.GetComponent<Material>();
+        //characterUI.InitHPSlider(baseAttribute.HP);
         
+    }
+
+    public void Setup()
+    {
+        charGraphic.EnableGraphic();
+        //mover.EnableMovement();
+    }
+
+     public void SetupAll()
+    {
+        
+        
+    }
+
+    public void ClearGame()
+    {
+        charGraphic.DisableGraphic();
+        mover.DisableMovement();
     }
 
     public void ResetScript()
     {
-        
+        this.baseAttribute.ResetStat();
+        this.mover.RefreshSpeed();
+        this.charAnim.ResetSpeed();
+        this.charSensor.ResetSensor();
+        hp = baseAttribute.HP;
+        characterUI.InitHPSlider(baseAttribute.HP);
     }
+    
 
     public void DoLevelUp()
     {
@@ -68,8 +100,10 @@ public class Character : MonoBehaviour
 
     public void AddTarget(Transform t)
     {
-        charAnim.Shoot();
+        
         rotator.AddTarget(t);
+        if(GetInvulnerable() == false)
+        charAnim.Shoot();
     }
 
     public void RemoveTargetOnly(Transform t)
@@ -89,6 +123,18 @@ public class Character : MonoBehaviour
     public void DoShoot()
     {
         shooter.DoShoot();
+    }
+
+    public void Idling()
+    {
+        charAnim.Idle();
+        shooter.ShootIdle();
+    }
+
+    public void MoveAnim()
+    {
+        charAnim.Move();
+        shooter.ShootMove();
     }
 
     public void ShakeCamera(float magnitude, float hold, float duration)
@@ -121,18 +167,61 @@ public class Character : MonoBehaviour
         return hitBox;
     }
 
-    public bool GetHit(int dmg)
+    public bool GetHit(Transform byWhere, int dmg)
     {
-        hp -= dmg;
-        GameplayController.instance.AddStatistic(StatisticID.damageTaken, dmg);
+        float trueDamage = dmg - (baseAttribute.armor);
+        //trueDamage = trueDamage + ((trueDamage * baseAttribute.damageMultiplier) / 10);
+        hp -= (int)trueDamage;
+        
         if(hp <= 0)
         {
-            GameplayController.instance.AddStatistic(StatisticID.deathTimes, 1);
+            characterUI.UpdateSlider(0);
+            Dead();
+            //GameplayController.instance.AddStatistic(StatisticID.deathTimes, 1);
             return true;
         }
+        characterUI.UpdateSlider(hp);
+        Vector3 throwDirection = (mover.GetMover().position - byWhere.position);
+        throwDirection.y = 0;
+        throwDirection.Normalize();
+        mover.Throw(throwDirection);
+        GetHitAnim();
+        rotator.ForceLookAt(byWhere);
+        ShakeCamera(3.0f, .250f, 1.0f);
+        sound.Play(0);
+        //GameplayController.instance.PlayerDamaged(dmg);
+        //Invulnerable();
+        //GameplayController.instance.AddStatistic(StatisticID.damageTaken, dmg);
+        
 
         
         return false;
+    }
+
+   
+
+    public void Dead()
+    {
+        sound.Play(1);
+        PauseAnim();
+        ShakeCamera(10.0f, .0f, 1.0f);
+        deadEffect.Play();
+        charGraphic.DisableGraphic();
+        hitBox.enabled = false;
+        mover.DisableMovement();
+        GameplayController.instance.PlayerDead();
+    }
+
+    public void GetHitAnim()
+    {
+        rotator.UnRotating();
+        charAnim.GetHit();
+    }
+
+    public void NormalizeAnim()
+    {
+        charAnim.Idle();
+        rotator.Rotating();
     }
 
     public Transform GetMover()
@@ -143,6 +232,13 @@ public class Character : MonoBehaviour
     public void ApplyStat(List<int> values)
     {
         baseAttribute.AddStat(values);
+        mover.RefreshSpeed();
+        charSensor.RefreshSensor();
+        this.charAnim.RefreshSpeed();
+        this.hp = baseAttribute.HP;
+        this.characterUI.InitHPSlider(this.hp);
+        //mover.SetSpeed(values[(int)ChoiceMemberID.Movement_Speed]);
+
     }
 
     public MainCharacterAttribute GetAttribute()
@@ -158,35 +254,41 @@ public class Character : MonoBehaviour
 
     public void Invulnerable()
     {
+        ShowBarrier();
         this.invulnerable = true;
     }
 
     public void UnInvulnerable()
     {
+        HideBarrier();
         this.invulnerable = false;
     }
 
     public void ShowBarrier()
     {
+        LeanTween.cancel(barrierScaler.gameObject);
         LeanTween.cancel(barrier);
-        LeanTween.scale(barrier, Vector3.one, 0.5f).setEase(LeanTweenType.easeOutQuad).setOnComplete(()=>{
-            LeanTween.value(barrier.gameObject, .0f, 1.0f, 1.5f).setOnUpdate((float f)=>{
-                Color a = barrierMaterial.color;
-                barrierMaterial.color = new Color(a.r, a.g, a.b, f);
-            }).setLoopPingPong(3).setOnComplete(()=>{
-                HideBarrier();
+        Color a = barrierRenderer.material.color;
+        barrierRenderer.material.color = new Color(a.r,a.g,a.b,0);
+        LeanTween.scale(barrierScaler.gameObject, Vector3.one, 0.5f).setEase(LeanTweenType.easeOutQuad).setOnComplete(()=>{
+            LeanTween.value(barrier.gameObject, .0f, 1.0f, .5f).setOnUpdate((float f)=>{
+                Color a = barrierRenderer.material.color;
+                barrierRenderer.material.color = new Color(a.r, a.g, a.b, f);
+            }).setLoopType(LeanTweenType.pingPong).setOnComplete(()=>{
+                //HideBarrier();
             });
         });
     }
 
     public void HideBarrier()
     {
-        LeanTween.cancel(barrier);
-        LeanTween.value(barrier.gameObject, 1.0f, .0f, .25f).setOnUpdate((float f)=>{
-            Color a = barrierMaterial.color;
-            barrierMaterial.color = new Color(a.r, a.g, a.b, f);
+        LeanTween.cancel(barrierScaler.gameObject);
+        LeanTween.cancel(barrier.gameObject);
+        LeanTween.value(barrier.gameObject, 1.0f, .0f, 1.0f).setOnUpdate((float f)=>{
+            Color a = barrierRenderer.material.color;
+            barrierRenderer.material.color = new Color(a.r, a.g, a.b, f);
         }).setOnComplete(()=>{
-            LeanTween.scale(barrier, Vector3.zero, 0.25f).setEase(LeanTweenType.easeOutQuad);
+            LeanTween.scale(barrierScaler.gameObject, Vector3.zero, 0.25f).setEase(LeanTweenType.easeOutQuad);
         });
     }
 
@@ -203,5 +305,12 @@ public class Character : MonoBehaviour
     public void ResumeAnim()
     {
         charAnim.Resume();
+        mover.EnableMovement();
     }
+
+    public float GetDmg()
+    {
+        return baseAttribute.baseDamage;
+    }
+
 }

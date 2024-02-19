@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CharacterEnemySensor : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class CharacterEnemySensor : MonoBehaviour
     [SerializeField] List<Collider> Enemies;
     [SerializeField] List<BaseEnemy> sensoredEnemy;
     [SerializeField] List<DistanceComparerF> sensoredEnemyDistance;
-    
+    [SerializeField] float defaultRadius = 5.0f;
+    [SerializeField] float radius = 5.0f;
     private void Start() {
         Enemies = new List<Collider>();
         sensoredEnemyDistance = new List<DistanceComparerF>();
@@ -25,7 +27,15 @@ public class CharacterEnemySensor : MonoBehaviour
 
     }
 
+    public void ResetSensor()
+    {
+        radius = defaultRadius;
+    }
 
+    public void RefreshSensor()
+    {
+        radius = coreChar.GetAttribute().pickupRadius;
+    }
 
     public void RegisterEnemy(Collider g, BaseEnemy e)
     {
@@ -77,12 +87,15 @@ public class CharacterEnemySensor : MonoBehaviour
 
     public void ReSort()
     {
+
+        //sensoredEnemy.OrderBy(dis => Vector3.Distance)
+
         try
         {
             sensoredEnemy.Sort((delegate(BaseEnemy a, BaseEnemy b)
-            {return Vector2.Distance(coreChar.GetMover().position,a.GetMover().position)
+            {return Vector3.Distance(coreChar.GetMover().position,a.GetMover().position)
             .CompareTo(
-                Vector2.Distance(coreChar.GetMover().position,b.GetMover().position) );
+                Vector3.Distance(coreChar.GetMover().position,b.GetMover().position) );
             }));
         }catch(System.Exception e)
         {

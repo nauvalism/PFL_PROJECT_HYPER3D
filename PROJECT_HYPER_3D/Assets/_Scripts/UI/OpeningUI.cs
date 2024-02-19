@@ -13,10 +13,15 @@ public class OpeningUI : MonoBehaviour
     [SerializeField] CanvasGroup cg;
     [SerializeField] Button startBtn;
     
+    private void Start() {
+        ShowOpening();
+    }
 
     public void ShowOpening()
     {
-        LeanTween.value(cg.gameObject, 1.0f, .0f, .5f).setEase(LeanTweenType.easeOutQuad).setOnUpdate((float f)=>{
+        titleAnim.Play(titleAnimkey[0]);
+        centerAnim.Play(centerAnimKey[0]);
+        LeanTween.value(cg.gameObject, cg.alpha, 1.0f, .5f).setEase(LeanTweenType.easeOutQuad).setOnUpdate((float f)=>{
             cg.alpha = f;
             cg.interactable = true;
             cg.blocksRaycasts = true;
@@ -27,16 +32,34 @@ public class OpeningUI : MonoBehaviour
         });
     }
 
-    public void HideOpening(System.Action act)
+    public void DoHideOpening()
     {
         startBtn.interactable = false;
-        LeanTween.value(cg.gameObject, 1.0f, .0f, .5f).setEase(LeanTweenType.easeOutQuad).setOnUpdate((float f)=>{
+        GameplayController.instance.Flash(()=>{
+            HideOpening(()=>{
+                GameplayController.instance.StartGameCountDown();
+            });
+        }, null);
+        
+    }
+
+    public void HideOpening(System.Action act)
+    {
+        
+        startBtn.interactable = false;
+        titleAnim.Play(titleAnimkey[1]);
+        centerAnim.Play(centerAnimKey[1]);
+        GameplayController.instance.CharSetup();
+        LeanTween.value(cg.gameObject, 1.0f, .0f, .5f).setDelay(2).setEase(LeanTweenType.easeOutQuad).setOnUpdate((float f)=>{
             cg.alpha = f;
-            cg.interactable = true;
-            cg.blocksRaycasts = true;
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
         }).setOnComplete(()=>{
             cg.interactable = false;
             cg.blocksRaycasts = false;
+        }).setOnComplete(()=>{
+            
+            GameplayController.instance.StartGameCountDown();
         });
     }
 }

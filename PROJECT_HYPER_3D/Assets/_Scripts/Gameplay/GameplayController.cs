@@ -49,17 +49,20 @@ public class GameplayController : MonoBehaviour
         instance = this;
     }
 
-
+    [SerializeField] MainCharacterAttribute defaultCharAttribute;
     [SerializeField] Character mainChar;
     [SerializeField] EXP charExp;
+    [SerializeField] TextAsset raw;
+    [SerializeField] List<MainCharacterAttribute> expAttributes;
     [SerializeField] BattleStatistics battle;
     [SerializeField] UIManager ui;
     [SerializeField] GameState state;
     [SerializeField] float invulnerableDuration = 2;
     [SerializeField] float startWaitTime = 3;
-    
+    [SerializeField] float sessionSecond = 0;
     
     [SerializeField] StatisticsValue sValue;
+    [SerializeField] SoundManager generalUISound;
     [SerializeField] MusicManager music;
 
     private void OnValidate() {
@@ -71,52 +74,238 @@ public class GameplayController : MonoBehaviour
             }
         }
 
+        if(raw != null)
+        {
+            ProcessAttributes();
+        }
         
+    }
+
+    public void ProcessAttributes()
+    {
+        expAttributes = new List<MainCharacterAttribute>();
+        var pro = JSON.Parse(raw.text);
+        
+        var data = pro["data"];
+        for(int i = 0 ; i < data.Count ; i++)
+        {
+            MainCharacterAttribute attr = new MainCharacterAttribute();
+            List<int> val = new List<int>();
+            var datai = data[i];
+            for(int j = 0 ; j < 8 ; j++)
+            {
+                int _v = datai[j];
+                val.Add(_v);
+            }
+            attr.SetStat(val);
+            expAttributes.Add(attr);
+        }
+    }
+
+    public void ApplyPowerupStat(int lvl)
+    {
+        MainCharacterAttribute attr = expAttributes[lvl];
+        mainChar.GetAttribute().AddStat(attr);
     }
 
     private void Update() {
         if(Input.GetKeyDown(KeyCode.B))
         {
-            mainChar.DoLevelUp();
+            StartGameCountDown();
+        }
+
+        if(Input.GetKeyDown(KeyCode.N))
+        {
+            InstaDead();
         }
 
 
         if(state == GameState.MidGame)
         {
             sValue.AddValue(StatisticID.timeSurvive, Time.deltaTime);
+            sessionSecond += Time.deltaTime;
+        }
+
+
+    }
+
+    public void InstaDead()
+    {
+        GameObject go = new GameObject();
+        go.transform.position = new Vector3(.0f, .0f, 1.0f);
+        bool dead = mainChar.GetHit(go.transform, 100);
+        if(dead)
+        {
+            AddStatistic(StatisticID.deathTimes,1);
+            string tSpent;
+            System.TimeSpan t = System.TimeSpan.FromSeconds(sessionSecond);
+            tSpent = string.Format("{0:D2}:{1:D2}", t.Minutes, t.Seconds);
+            SetStatistic(StatisticID.timeSurvive, sessionSecond);
+            SyncValuestoUI();
+            ui.HideVignette();
         }
     }
 
     private void Start() {
         mainChar = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
-        ResetStatistics();
-        ResetExp();
-        ui.SetExp(charExp.maxExp[0], charExp.currentExp);
+        //ResetStatistics();
+        //ResetExp();
+        ResetAll();
        
     }
 
-    public void StartGameCountDown()
+    public void CharSetup()
     {
-        StartCoroutine(StartGame());
-        IEnumerator StartGame()
-        {
-            yield return new WaitForSeconds(startWaitTime);
-
-        }
+        mainChar.Setup();
     }
 
     public void ResetAll()
     {
+        AnalogManager.instance.DisableAnalog();
         WaveManager.instance.ResetScript();
         mainChar.ResetScript();
         EnemySpawner.instance.ResetScript();
         ChoiceManager.instance.ResetChoices();
+        ResetExp();
+        ResetStatistics();
     }
 
+    public void StartGameCountDown()
+    {
+        
+        StartCoroutine(StartGame());
+        IEnumerator StartGame()
+        {
+            ResetAll();
+            yield return new WaitForSeconds(startWaitTime);
+            ui.StartCountdownWave(()=>{
+                AnalogManager.instance.ResetAnalog();
+                ResumeEnemyAndCharacter();
+                SetState(GameState.MidGame);
+                SpawnWave();
+                music.Play(0);
+            });
+            
+            
+        }
+    }
+
+    public void SpawnWave()
+    {
+        
+        EnemySpawner.instance.SpawnEnemies();
+    }
+
+
+
+    public void AddWave(bool addWaveOnly)
+    {
+        int _wave = WaveManager.instance.GetCurrentWave();
+        int _dWave = _wave + 1;
+        ui.WaveComplete(_dWave, ()=>{
+            if(addWaveOnly)
+            {
+                WaveManager.instance.AddWaveOnly();
+            }
+            else
+            {
+                WaveManager.instance.AddWave();
+            }
+            
+        });
+    }
+
+    public void AddWave(bool addWaveOnly, System.Action after)
+    {
+        int _wave = WaveManager.instance.GetCurrentWave();
+        int _dWave = _wave + 1;
+        ui.WaveComplete(_dWave, ()=>{
+            if(addWaveOnly)
+            {
+                WaveManager.instance.AddWaveOnly();
+            }
+            else
+            {
+                WaveManager.instance.AddWave();
+            }
+            
+            if(after != null)
+            {
+                after();
+            }
+        });
+    }
+
+    public void CompleteWave()
+    {
+        PauseEnemyAndCharacter();
+        generalUISound.Play(0);
+        
+        Flash(()=>{
+            EnemyCountPair waveData = WaveManager.instance.GetNextWaveData();
+            
+            if(waveData != null)
+            {
+                AddWave(false, ()=>{
+                    ProcessNextWave();
+                });
+            }
+            else
+            {
+                AddWave(true, ()=>{
+                    ProcessNextWave();
+                });
+            }
+            
+        },()=>{
+            // bool isEnding = WaveManager.instance.IsEnding();
+            // Debug.Log(isEnding);
+            // if(isEnding)
+            // {
+            //     //EnemySpawner.instance.RemoveAllEnemies();
+            //     GameEnds();
+            //     PlayerDead();
+                
+            // }
+            // else
+            // {
+            //     ui.StartCountdownWave(()=>{
+            //         ResumeEnemyAndCharacter();
+            //         EnemySpawner.instance.SpawnEnemies();
+            //     });
+            // }
+
+
+            
+
+        });
+    }
+
+    
+    public void ProcessNextWave()
+    {
+        bool isEnding = WaveManager.instance.IsEnding();
+        Debug.Log(isEnding);
+        if(isEnding)
+        {
+            //EnemySpawner.instance.RemoveAllEnemies();
+            GameEnds();
+            PlayerDead();
+            
+        }
+        else
+        {
+            ui.StartCountdownWave(()=>{
+                ResumeEnemyAndCharacter();
+                EnemySpawner.instance.SpawnEnemies();
+            });
+        }
+    }
 
     public void ResetExp()
     {
         charExp.ResetExp();
+        ui.SetExp(charExp.maxExp[0], charExp.currentExp);
     }
 
     public void ResetStatistics()
@@ -128,22 +317,40 @@ public class GameplayController : MonoBehaviour
     public void KillEnemy()
     {
         battle.AddEnemyKilled();
+        
+        AddStatistic(StatisticID.zombieKilled,1);
+        bool complete = WaveManager.instance.EnemyKilled();
+        ui.UpdateEnemyKilled(WaveManager.instance.GetTotalEnemyKilled());
+        if(complete)
+        {
+            CompleteWave();
+        }
     }
+
+
 
     public void DealDamage(int dmg)
     {
         battle.DealDamage(dmg);
+        AddStatistic(StatisticID.damageDealt,dmg);
     }
 
-    public void PlayerDamaged(int dmg)
+    
+
+    public void PlayerDamaged(BaseEnemy by, int dmg)
     {
-        bool dead = mainChar.GetHit(dmg);
+        bool dead = mainChar.GetHit(by.GetMover(), dmg);
+        AddStatistic(StatisticID.damageTaken,dmg);
         if(dead)
         {
+            AddStatistic(StatisticID.deathTimes,1);
+            //ui.SyncGameOverStats(sValue.statisticValue);
+            SyncValuestoUI();
             ui.HideVignette();
         }
         else
         {
+            
             StartCoroutine(PlayerDamaging());
         }
 
@@ -158,12 +365,31 @@ public class GameplayController : MonoBehaviour
         
     }
 
+    public void GameEnds()
+    {
+        mainChar.ClearGame();
+    }
+
+    public void PlayerDead()
+    {
+        EnemySpawner.instance.RemoveAllEnemies();
+        StartCoroutine(ShowingGameOver());
+        IEnumerator ShowingGameOver()
+        {
+            music.Stop();
+            yield return new WaitForSeconds(1.0f);
+            ui.ShowGameOver();
+        }
+        
+    }
+
     public void AddExp(int exp)
     {
         bool levelup = charExp.AddExp(exp);
         if(levelup)
         {
-            
+            int lvl = charExp.currentLevel;
+            ApplyPowerupStat(lvl);
             ShowPowerup();
         }
         float cur = this.charExp.currentExp;
@@ -185,7 +411,26 @@ public class GameplayController : MonoBehaviour
 
     public void ShowPowerup()
     {
-        ChoiceManager.instance.ShowChoices(false);
+        AnalogManager.instance.DisableAnalog();
+        PauseEnemyAndCharacter();
+        SetState(GameState.LevelUp);
+        Flash(()=>{
+            mainChar.DoLevelUp();
+        },()=>{
+            ChoiceManager.instance.ShowChoices(false);
+        });
+        
+        
+        
+       
+        
+    }
+
+    public void HidePowerup()
+    {
+        SetState(GameState.MidGame);
+        ResumeEnemyAndCharacter();
+        AnalogManager.instance.ResetAnalog();
     }
 
     public void SetState(GameState state)
@@ -204,8 +449,10 @@ public class GameplayController : MonoBehaviour
         mainChar.ApplyStat(toBeAdded);
     }
 
-    public void Flash(System.Action during, System.Action after)
+    public void Flash(System.Action during, System.Action after, bool withSound = true)
     {
+        if(withSound)
+            generalUISound.Play(0);
         ui.Flash(during,after);
     }
 
@@ -224,9 +471,29 @@ public class GameplayController : MonoBehaviour
         sValue.AddValue(what,value);
     }
 
+    public void SyncValuestoUI()
+    {
+        ui.SyncGameOverStats(sValue.statisticValue);
+    }
+
     public void SyncBasicStats(MainCharacterAttribute attr)
     {
         sValue.SetValue(attr);
+    }
+
+    public float GetSessionSecond()
+    {
+        return sessionSecond;
+    }
+
+    public  MainCharacterAttribute GetDefaultAttribute()
+    {
+        return defaultCharAttribute;
+    }
+
+    public void ShowOpeningUI()
+    {
+        ui.ShowOpening();
     }
 }
 
@@ -235,6 +502,7 @@ public class StatisticsValue
 {
     public List<float> statisticValue;
     public List<float> baseStatValues;
+    
 
     public StatisticsValue()
     {
@@ -309,6 +577,16 @@ public class CharacterAttribute
     public float armor = 10;
     public float damageMultiplier = 1;
 
+    public virtual void SetStat(List<int> _val)
+    {
+
+    }
+
+    public virtual void SetStat(MainCharacterAttribute attr)
+    {
+
+    }
+
     public virtual void AddStat(CharacterAttribute stat)
     {
         this.HP += stat.HP;
@@ -321,6 +599,21 @@ public class CharacterAttribute
     public virtual void AddStat(MainCharacterAttribute stat)
     {
 
+    }
+
+    public virtual void ResetStat()
+    {
+
+    }
+
+    public virtual void ResetStat(CharacterAttribute reference)
+    {
+
+    }
+
+    public virtual void ResetStat(MainCharacterAttribute reference)
+    {
+        
     }
 
     public virtual void AddStat(EnemyAttribute stat)
@@ -357,6 +650,29 @@ public class MainCharacterAttribute : CharacterAttribute
     public float range = 10;
     public float pickupRadius = 1;
 
+    public override void SetStat(List<int> values)
+    {
+        this.HP = values[(int)ChoiceMemberID.Max_Health_Points];
+        this.speed = values[(int)ChoiceMemberID.Movement_Speed];
+        this.baseDamage = values[(int)ChoiceMemberID.Base_Damage];
+        this.armor = values[(int)ChoiceMemberID.Body_Armor];
+        this.damageMultiplier = values[(int)ChoiceMemberID.Damage_Multiplier];
+        this.baseAspd = values[(int)ChoiceMemberID.Attack_Speed];
+        this.range = values[(int)ChoiceMemberID.Shoot_Range];
+        this.pickupRadius = values[(int)ChoiceMemberID.Pickup_Radius];
+    }
+
+    public override void SetStat(MainCharacterAttribute stat)
+    {
+        this.HP = stat.HP;
+        this.speed = stat.speed;
+        this.baseDamage = stat.baseDamage;
+        this.armor = stat.armor;
+        this.damageMultiplier = stat.damageMultiplier;
+        this.baseAspd = stat.baseAspd;
+        this.range = stat.range;
+        this.pickupRadius = stat.pickupRadius;
+    }
 
     public override void AddStat(MainCharacterAttribute stat)
     {
@@ -383,9 +699,28 @@ public class MainCharacterAttribute : CharacterAttribute
         this.pickupRadius += values[(int)ChoiceMemberID.Pickup_Radius];
     }
 
+    public override void ResetStat()
+    {
+        MainCharacterAttribute reference = GameplayController.instance.GetDefaultAttribute();
+        ResetStat(reference);
+    }
+
+    public override void ResetStat(MainCharacterAttribute reference)
+    {
+        base.ResetStat(reference);
+        this.HP = reference.HP;
+        this.speed = reference.speed;
+        this.baseDamage = reference.baseDamage;
+        this.armor = reference.armor;
+        this.damageMultiplier = reference.damageMultiplier;
+        this.baseAspd = reference.baseAspd;
+        this.range = reference.range;
+        this.pickupRadius = reference.pickupRadius;
+    }
+
     public override void RefreshStatToStatistic()
     {
-
+        
     }
 
     public override void RefreshStatToStatistic(CharacterAttribute ca)
@@ -457,6 +792,7 @@ public class EXP
     {
         maxExp = new List<int>();
         var pro = JSON.Parse(levelTxts.text);
+        
         var data = pro["data"];
         for(int i = 0 ; i < data.Count ; i++)
         {

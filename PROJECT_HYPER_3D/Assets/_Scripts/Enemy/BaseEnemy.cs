@@ -12,6 +12,7 @@ public class BaseEnemy : MonoBehaviour
     [Header("Main Attribute")]
     [SerializeField] GameObject root;
     [SerializeField] Collider col;
+    [SerializeField] Rigidbody rb;
     [SerializeField] EnemyAnimationCatcher anim;
     [SerializeField] EnemyAttribute attribute;
     [SerializeField] GraphicActor graphic;
@@ -24,6 +25,7 @@ public class BaseEnemy : MonoBehaviour
     [SerializeField] float speed = 2;
     [SerializeField] float distanceFromTarget = 0;
     [SerializeField] ParticleSystem deathEffect;
+    [SerializeField] ParticleSystem hitEffect;
     [SerializeField] List<ParticleSystem> projectileDeathEffect;
     [SerializeField] bool enableAI = true;
 
@@ -35,6 +37,7 @@ public class BaseEnemy : MonoBehaviour
 
     [Header("Extras")]
     [SerializeField] SoundManager sound;
+    [SerializeField] SoundManager dSound;
 
     protected virtual void Awake()
     {
@@ -75,10 +78,12 @@ public class BaseEnemy : MonoBehaviour
 
     public DropList GetHit(int dmg = 10)
     {
-        sound.Play(0);
+        
         graphic.GetHit();
+        hitEffect.Play();
         DisplayHPDecrease(dmg);
-        GameplayController.instance.AddStatistic(StatisticID.damageDealt, dmg);
+        //GameplayController.instance.AddStatistic(StatisticID.damageDealt, dmg);
+        GameplayController.instance.DealDamage(dmg);
         bool result = DecreaseHP(dmg);
         if(result)
         {
@@ -87,13 +92,14 @@ public class BaseEnemy : MonoBehaviour
             GameplayController.instance.AddExp(dropList.curNum[0]);
             return dropList;
         }
-
+        sound.Play(0);
+        dSound.Play(0);
         return null;
     }
 
     public void DisplayHPDecrease(int dmg)
     {
-        Debug.Log("Displaying HP Decrease");
+        //Debug.Log("Displaying HP Decrease");
         Transform t = hpDecreasePlace[Random.Range(0, hpDecreasePlace.Count)];
         GameObject go;
         go = (GameObject)Instantiate(dmgTextPrefab, t.position, Quaternion.identity, dmgTxtParent);
@@ -113,13 +119,25 @@ public class BaseEnemy : MonoBehaviour
 
     public void Dead()
     {
-        GameplayController.instance.AddStatistic(StatisticID.zombieKilled, 1);
+        GameplayController.instance.KillEnemy();
+        EnemySpawner.instance.KillEnemy(this);
         col.enabled = false;
         targetChar.RemoveEnemyTarget(this);
         deathEffect.Play();
         graphic.DisableGraphic();
         enableAI = false;
+        sound.Play(1);
+        dSound.Play(1);
         Destroy(gameObject, 1.0f);
+    }
+
+    public void Remove()
+    {
+        col.enabled = false;
+        rb.isKinematic = true;
+        LeanTween.scale(mover.gameObject, Vector3.zero, 0.5f).setEase(LeanTweenType.easeOutQuad).setOnComplete(()=>{
+            Destroy(gameObject);
+        });
     }
 
     public void PauseAll()
@@ -141,6 +159,8 @@ public class BaseEnemy : MonoBehaviour
         });
     }
 
+
+
     public Collider GetCollider()
     {
         return col;
@@ -158,7 +178,7 @@ public class BaseEnemy : MonoBehaviour
 
     public int GetHitDmg()
     {
-        return hitDmg;
+        return (int)attribute.baseDamage;
     }
 }
 

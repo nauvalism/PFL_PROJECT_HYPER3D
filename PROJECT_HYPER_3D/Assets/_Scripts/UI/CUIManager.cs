@@ -15,13 +15,17 @@ public class CUIManager : MonoBehaviour
 
     public void InitHPSlider(float f)
     {
-        this.hpSlider.maxValue = f;
-        this.hpSlider.value = f;
+        //this.hpSlider.maxValue = f;
+        //this.hpSlider.value = f;
+
+        hpUI.InitHP(f);
     }
 
     public void UpdateSlider(float f)
     {
-        this.hpSlider.value = f;
+        //this.hpSlider.value = f;
+        hpUI.UpdateSliderValue(f);
+        hpUI.UpdateText(f);
     }
 
     public void UpdateText(float f)

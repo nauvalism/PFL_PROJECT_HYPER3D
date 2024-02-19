@@ -71,5 +71,9 @@ public class GraphicActor : MonoBehaviour
         
     }
 
+    public virtual void EnableGraphic()
+    {
+        rootGraphic.transform.localScale = Vector3.one;
+    }
     
 }

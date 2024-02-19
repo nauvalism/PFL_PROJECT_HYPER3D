@@ -14,6 +14,7 @@ public class CharacterRotator : MonoBehaviour
     [SerializeField] RaycastHit hit;
     [SerializeField] Ray ray;
     [SerializeField] Transform target;
+    [SerializeField] bool _rot = true;
 
     private void Awake() {
         currentReference = refer2;
@@ -56,6 +57,9 @@ public class CharacterRotator : MonoBehaviour
     void Update()
     {
 
+        if(_rot == false)
+        return;
+
         if(target == null)
         {
             // ray = mainCam.ScreenPointToRay(Input.mousePosition);
@@ -85,5 +89,22 @@ public class CharacterRotator : MonoBehaviour
     public Transform GetCurrentReference()
     {
         return currentReference;
+    }
+
+    public void ForceLookAt(Transform to)
+    {
+        rotator.LookAt(to);
+    }
+
+    public void Rotating()
+    {
+        
+        //shooter.SyncShootDirection(refer2.position);
+        _rot = true;
+    }
+
+    public void UnRotating()
+    {
+        _rot = false;
     }
 }

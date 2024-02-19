@@ -6,6 +6,7 @@ using TMPro;
 
 public class StatisticElement : MonoBehaviour
 {
+    [SerializeField] ChoiceMemberID statisticCorrespondent;
     [SerializeField] Transform mover;
     [SerializeField] CanvasGroup moverCG;
     [SerializeField] string statisticTitle;
@@ -31,9 +32,16 @@ public class StatisticElement : MonoBehaviour
         }
     }
 
+    
+
     public void SetValue(string title, string value)
     {
         titleTxt.text = title;
+        valueTxt.text = value;
+    }
+
+    public void SetValue( string value)
+    {
         valueTxt.text = value;
     }
 
@@ -42,7 +50,7 @@ public class StatisticElement : MonoBehaviour
         LeanTween.cancel(mover.gameObject);
         LeanTween.cancel(moverCG.gameObject);
         moverCG.alpha = 0;
-        mover.localPosition = new Vector3(-50.0f, .0f, .0f);
+        mover.localPosition = new Vector3(-150.0f, .0f, .0f);
 
     }
 

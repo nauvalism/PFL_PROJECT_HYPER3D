@@ -41,6 +41,16 @@ public class BaseBullet : MonoBehaviour
         
     }
 
+    public void LaunchBullet(Vector3 dir, Transform reference, int dmg)
+    {
+        this.dmg = dmg;
+        this.dir = dir;
+        graphic.transform.LookAt(reference, new Vector3(0,0,1));
+        //graphic.transform.Rotate(new Vector3(0,90,0))
+        rb.AddForce(dir * speed);
+        
+    }
+
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.CompareTag("Enemy"))
         {

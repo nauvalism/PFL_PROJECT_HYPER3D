@@ -10,7 +10,9 @@ public class CharAnimatorCatcher : MonoBehaviour
     [SerializeField] SoundManager shootSound;
     [SerializeField] SoundManager footSound;
     
-    
+    private void Update() {
+        transform.localPosition = Vector3.zero;
+    }
 
     public void DoShoot()
     {
@@ -39,16 +41,42 @@ public class CharAnimatorCatcher : MonoBehaviour
     public void Idle()
     {
         anim.Play("IDLE",0);
+        Shoot();
     }
 
     public void Move()
     {
-        anim.Play("WALK");
+        if(isPlaying("WALK") == false)
+        {
+            anim.Play("WALK",0);
+        }
+        
     }
 
     public void Shoot()
     {
         anim.Play("SHOOT", 1);
+    }
+
+    public void GetHit()
+    {
+        anim.Play("HIT",0);
+        anim.Play("HIT",1);
+    }
+
+    public void Normal()
+    {
+        Move();
+        Shoot();
+    }
+
+    bool isPlaying(string stateName)
+    {
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName(stateName) &&
+                anim.GetCurrentAnimatorStateInfo(0).normalizedTime < 1.0f)
+            return true;
+        else
+            return false;
     }
 
     public void Pause()
@@ -69,5 +97,11 @@ public class CharAnimatorCatcher : MonoBehaviour
     public void PlayFootSound()
     {
         shootSound.Play(0);
+    }
+
+    public void RefreshSpeed()
+    {
+        float to = 1 +(_char.GetAttribute().baseAspd/30);
+        anim.SetFloat("SpeedModifier", to);
     }
 }
