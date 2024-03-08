@@ -147,7 +147,7 @@ public class GameplayController : MonoBehaviour
     }
 
     private void Start() {
-        mainChar = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
+        //mainChar = GameObject.FindGameObjectWithTag("Player").GetComponent<Character>();
         //ResetStatistics();
         //ResetExp();
         ResetAll();
